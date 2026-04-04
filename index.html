@@ -6,9 +6,12 @@
 <!-- ====================
 METADADOS DO SISTEMA
 ====================== -->
-<title>Sistema Inteligente -  versão 1.4.0</title>
+<title>Sistema de Avaliação Profissional-  versão 1.4.0</title>
+
 <meta name="author" content="Iraê César Brandão">
+
 <meta name="keywords" content="  avaliação de competências, inteligência artificial, desenvolvimento humano, análise de desempenho, gestão de talentos, dashboard, relatório PDF, educação, autoavaliação ">
+
 <meta name="description" content=" Sistema Inteligente de Avaliação com IA desenvolvido para análise de competências humanas, geração de indicadores de desempenho, visualização em dashboard e exportação de relatórios. A aplicação permite cadastro, acompanhamento evolutivo, classificação de perfil e suporte à tomada de decisão baseada em dados. ">
 
 <!-- ====================
@@ -25,8 +28,8 @@ METADADOS DO SISTEMA
 <style>
 body { 
 font-family: Arial; 
-background:#0f172a; 
-color:#fff; padding:20px;
+background:  white;   /*#0f172a; */
+color:  white; padding:20px;
 }
 
 .container { 
@@ -51,12 +54,14 @@ border:none;
 
 h1{ 
 text-align:center; 
+color: black;
 font-size:40px; 
 letter-spacing:3px; 
 text-shadow:3px 3px 0px #bbb;
 }
 
 .author{ 
+color: black;
 text-align:center; 
 font-size:14px; 
 margin-bottom:30px; 
@@ -108,7 +113,7 @@ flex-wrap:wrap;
 ====================== -->
 <body>
 <div class="container">
-<h1>Sistema Inteligente de Avaliação com IA</h1>
+<h1>Sistema de Avaliação Profissional</h1>
 <div class="author">Iraê César Brandão - Desenvolvedor  (Versão 1.4.0 )  Data: 04-abril-2026</div>
 
 <div class="card">
@@ -169,6 +174,8 @@ TABELA RESULTDOS
 </div>
 
 </div>
+
+
 
 <!-- ====================
          SCRIPTS JS
@@ -276,6 +283,7 @@ function salvar(){
  localStorage.setItem("empresa", JSON.stringify(banco));
  atualizarTabela();
  limparFormulario();
+ alert("Cadastro salvo com sucesso!");
 }
 
 /* ========= UI ========= */
@@ -321,6 +329,7 @@ function editar(i){
 }
 
 function excluir(i){
+alert("Dados excluído com sucesso do cache do navegador.");
  banco.splice(i,1);
  localStorage.setItem("empresa", JSON.stringify(banco));
  atualizarTabela();
@@ -350,7 +359,6 @@ function dashboard(i){
 
 /* ========= PDF COMPLETO ========= */
 function gerarPDF(){
-
  if(!selecionado){
   alert("Selecione um usuário");
   return;
@@ -398,6 +406,7 @@ function gerarPDF(){
  });
 
  doc.save("relatorio_"+selecionado.nome+".pdf");
+  alert("PDF salvo com sucesso!");
 }
 
 /* ========= EXPORT ========= */
@@ -457,7 +466,7 @@ function importarCompleto(event){
 
 /* ========= LIMPAR ========= */
 function limparTudo(){
- if(!confirm("Apagar tudo?")) return;
+ if(!confirm("Apagar tudo? Faça backup antes de limpar, pois os dados não poderão ser recuperados posteriormente.")) return;
  localStorage.removeItem("empresa");
  banco=[];
  atualizarTabela();
@@ -471,7 +480,7 @@ atualizarTabela();
 <!-- ====================
       RODAPÉ
 ====================== -->
-   <footer  style="text-align:center; font-size: 15px;" > <hr>
+   <footer  style="text-align:center; font-size: 15px; color: black" > <hr>
         © 2026 — Iraê César Brandão - Dev - Página demonstrativa para fins acadêmicos </a>
   </footer>
 </html>
