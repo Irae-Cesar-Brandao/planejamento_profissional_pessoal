@@ -67,8 +67,8 @@ td, th { border:1px solid #334155; padding:6px; text-align:center; }
 
 <button class="btn" onclick="salvar()">Salvar</button>
 <button class="btn-danger" onclick="limparTudo()">Limpar Tudo</button>
-<button onclick="exportarExcel()">📊 Exportar Excel Completo</button>
-<button onclick="exportarCompleto()">Exportar Completo (JSON)</button>
+<button onclick="exportarExcel()"> Exportar Excel</button>
+<button onclick="exportarCompleto()">Backup Completo (JSON)</button>
 
 <input type="file" onchange="importarCompleto(event)">
 
@@ -167,7 +167,7 @@ function salvar(){
 
  } else {
 
-  // 🆕 NOVO
+  //  NOVO
   banco.push({
     nome:nomeVal,
     idade:idade.value,
@@ -354,11 +354,26 @@ function excluir(i){
  atualizarTabela();
 }
 
+
+
+/*================
+   LIMPAR  TUDO
+================*/
 function limparTudo(){
- localStorage.clear();
- banco=[];
+
+ if(!confirm("Tem certeza que deseja apagar TODOS os dados?\nEssa ação não pode ser desfeita.")){
+  return;
+ }
+
+ localStorage.removeItem("empresa"); // remove só seu banco
+ banco = [];
  atualizarTabela();
+
+ alert("Dados apagados com sucesso do cache do navegador.");
 }
+
+
+
 
 
 function gerarPDF(){
@@ -552,6 +567,12 @@ function importarDados(event){
 
 function exportarCompleto(){
 
+ alert("Todos os dados das análises (detalhadas) estão sendo exportados para Downloads em formato JSON.\n\n" +
+       "✔ Os dados permanecem armazenados em cache no navegador.\n" +
+       "✔ Esses dados poderão ser importados futuramente.\n\n" +
+       "⚠ Eles só serão removidos ao usar a opção 'Limpar Tudo'.");
+
+
  const dados = JSON.stringify(banco, null, 2);
 
  const blob = new Blob([dados], { type: "application/json" });
@@ -562,15 +583,7 @@ function exportarCompleto(){
  a.click();
 }
 
-dados.forEach(novo => {
- let existente = banco.find(p => p.nome === novo.nome);
 
- if(existente){
-   existente.historico = existente.historico.concat(novo.historico);
- } else {
-   banco.push(novo);
- }
-});
 
 function exportarExcel(){
 
