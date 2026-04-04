@@ -6,7 +6,7 @@ Iraê César Brandão (Desenvolvedor Luck Way Informática)
 
 DESCRIÇÃO
 O Sistema Inteligente de Avaliação com IA é uma aplicação web desenvolvida para análise de competências humanas, permitindo o registro, acompanhamento e avaliação de desempenho de indivíduos com base em critérios quantitativos e qualitativos.
-
+O site está online em https://irae-cesar-brandao.github.io/planejamento_profissional_pessoal/
 
 A FERRAMENTA INTEGRA FUNCIONALIDAES DE
 - Cálculo de médias e indicadores percentuais
