@@ -640,6 +640,60 @@ function editar(i){
  alert("Modo edição ativado");
 }
 
+
+function importarCompleto(event){
+
+ const file = event.target.files[0];
+
+ if(!file){
+  alert("Selecione um arquivo JSON");
+  return;
+ }
+
+ const reader = new FileReader();
+
+ reader.onload = function(e){
+
+  try{
+
+   const dadosImportados = JSON.parse(e.target.result);
+
+   if(!Array.isArray(dadosImportados)){
+    alert("Formato inválido de arquivo.");
+    return;
+   }
+
+   // 🔥 MESCLAR com banco atual (sem duplicar nome)
+   dadosImportados.forEach(novo => {
+
+    let existente = banco.find(p => p.nome === novo.nome);
+
+    if(existente){
+     existente.historico = existente.historico.concat(novo.historico || []);
+     existente.notas = novo.notas || existente.notas;
+     existente.media = novo.media || existente.media;
+     existente.perc = novo.perc || existente.perc;
+    } else {
+     banco.push(novo);
+    }
+
+   });
+
+   localStorage.setItem("empresa", JSON.stringify(banco));
+   atualizarTabela();
+
+   alert("Importação JSON realizada com sucesso!");
+
+  } catch(err){
+   alert("Erro ao importar JSON.");
+   console.error(err);
+  }
+
+ };
+
+ reader.readAsText(file);
+}
+
 atualizarTabela();
 
 </script>
