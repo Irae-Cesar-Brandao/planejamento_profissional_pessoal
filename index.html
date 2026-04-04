@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Inteligente com IA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+body { font-family: Arial; background:#0f172a; color:#fff; padding:20px;}
+.container { max-width:1200px; margin:auto; }
+.card { background:#1e293b; padding:20px; border-radius:10px; margin-bottom:20px; }
+
+input, textarea {
+ width:100%; padding:8px; margin:5px 0;
+ border-radius:5px; border:none;
+}
+
+h1{
+text-align:center;
+margin-bottom:12px
+}
+
+.author{
+text-align:center;
+font-size:14px;
+margin-bottom:30px;
+opacity:.8}
+
+button {
+ padding:8px 12px; margin:4px;
+ border:none; border-radius:5px;
+ cursor:pointer;
+}
+
+.btn { background:#22c55e; }
+.btn-info { background:#38bdf8; }
+.btn-danger { background:#ef4444; }
+
+table { width:100%; border-collapse:collapse; }
+td, th { border:1px solid #334155; padding:6px; text-align:center; }
+
+.flex { display:flex; gap:20px; flex-wrap:wrap; }
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1> Sistema Inteligente de Avaliação com IA</h1>
+<div class="author">Autor: Iraê C. Brandão  -  03/04/2026.</div>
+
+
+<div class="card">
+<h3>Cadastro</h3>
+
+<input id="nome" placeholder="Nome">
+<input id="idade" placeholder="Idade">
+<input id="formacao" placeholder="Formação">
+<input id="area" placeholder="Área de Interesse">
+<input id="periodo" placeholder="Período de Planejamento">
+<textarea id="objetivo" placeholder="Objetivos"></textarea>
+
+<h3>Competências (1 a 10)</h3>
+<div id="inputs"></div>
+
+<button class="btn" onclick="salvar()">Salvar</button>
+<button class="btn-danger" onclick="limparTudo()">Limpar Tudo</button>
+<button onclick="exportarExcel()">📊 Exportar Excel Completo</button>
+<button onclick="exportarCompleto()">Exportar Completo (JSON)</button>
+
+<input type="file" onchange="importarCompleto(event)">
+
+<!-- button onclick="excluirSelecionado()">Excluir Selecionado</button -->
+</div>
+
+<div class="card">
+<h3>Base de Avaliações</h3>
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Média</th>
+<th>%</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabela"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>Dashboard</h3>
+
+<div class="flex">
+<canvas id="graficoRadar"></canvas>
+<canvas id="graficoLinha"></canvas>
+</div>
+
+<div id="sugestoes"></div>
+
+<button class="btn-info" onclick="analisarIA()">🧠 Análise com IA</button>
+<button onclick="trocarApiKey()"> Alterar API Key</button>
+
+<div id="analiseIA"></div>
+
+<button class="btn-info" onclick="gerarPDF()">Exportar PDF</button>
+</div>
+
+</div>
+
+<script>
+
+const competencias = [
+"Auto-motivação","Bom humor","Produção de conhecimento",
+"Liderança","Relacionamento interpessoal","Criatividade","Capacidade de sonhar"
+];
+
+let banco = JSON.parse(localStorage.getItem("empresa") || "[]");
+let selecionado = null;
+
+const div = document.getElementById("inputs");
+
+competencias.forEach(c=>{
+ div.innerHTML += `<label>${c}</label>
+ <input type="number" min="1" max="10" id="${c}" placeholder="Nota 1-10">`;
+});
+
+function calcular(){
+ let soma=0;
+ competencias.forEach(c=>{
+  soma += parseFloat(document.getElementById(c).value) || 0;
+ });
+ let media = soma/competencias.length;
+ let perc = (media/10)*100;
+ return {media, perc};
+}
+
+function salvar(){
+
+ let calc = calcular();
+ let nomeVal = nome.value;
+
+ let notas = {};
+ competencias.forEach(c=>{
+  notas[c] = document.getElementById(c).value;
+ });
+
+ if(selecionado){
+
+  // ATUALIZA EXISTENTE
+  selecionado.nome = nomeVal;
+  selecionado.idade = idade.value;
+  selecionado.formacao = formacao.value;
+  selecionado.area = area.value;
+  selecionado.periodo = periodo.value;
+  selecionado.objetivo = objetivo.value;
+  selecionado.notas = notas;
+  selecionado.media = calc.media;
+  selecionado.perc = calc.perc;
+
+  selecionado.historico.push({
+   data:new Date().toLocaleDateString(),
+   media:calc.media
+  });
+
+ } else {
+
+  // 🆕 NOVO
+  banco.push({
+    nome:nomeVal,
+    idade:idade.value,
+    formacao:formacao.value,
+    area:area.value,
+    periodo:periodo.value,
+    objetivo:objetivo.value,
+    notas,
+    historico:[{data:new Date().toLocaleDateString(), media:calc.media}],
+    media:calc.media,
+    perc:calc.perc
+  });
+
+ }
+
+ localStorage.setItem("empresa", JSON.stringify(banco));
+ atualizarTabela();
+
+ limparFormulario();
+}
+
+
+function limparFormulario(){
+
+ selecionado = null;
+
+ document.querySelectorAll("input, textarea").forEach(el=>{
+  el.value = "";
+ });
+}
+
+
+function atualizarTabela(){
+ let tb = document.getElementById("tabela");
+ tb.innerHTML="";
+
+ banco.forEach((d,i)=>{
+  tb.innerHTML+=`
+  <tr>
+   <td>${d.nome}</td>
+   <td>${d.media.toFixed(2)}</td>
+   <td>${d.perc.toFixed(1)}%</td>
+   <td>
+    <button onclick="editar(${i})">Editar</button>
+    <button onclick="dashboard(${i})">Dashboard</button>
+    <button onclick="excluir(${i})">Excluir</button>
+    
+   </td>
+  </tr>`;
+ });
+}
+
+function dashboard(i){
+ selecionado = banco[i];
+
+ let valores = competencias.map(c=> selecionado.notas[c]);
+
+ if(window.radar) window.radar.destroy();
+ window.radar = new Chart(document.getElementById("graficoRadar"),{
+  type:'radar',
+  data:{labels:competencias,datasets:[{label:'Competências',data:valores}]}
+ });
+
+ let labels = selecionado.historico.map(h=>h.data);
+ let dados = selecionado.historico.map(h=>h.media);
+
+ if(window.linha) window.linha.destroy();
+ window.linha = new Chart(document.getElementById("graficoLinha"),{
+  type:'line',
+  data:{labels:labels,datasets:[{label:'Evolução',data:dados}]}
+ });
+
+ gerarSugestoes();
+}
+
+function gerarSugestoes(){
+ let div = document.getElementById("sugestoes");
+ div.innerHTML="<h4>Recomendações</h4>";
+
+ for(let c in selecionado.notas){
+  if(selecionado.notas[c] < 6){
+   div.innerHTML += `<p> Melhorar ${c}</p>`;
+  }
+ }
+}
+
+/*======================
+SOLICITAR API KEY
+======================*/
+function getApiKey(){
+
+ let apiKey = localStorage.getItem("OPENAI_API_KEY");
+
+ if(!apiKey){
+
+  apiKey = prompt(" Insira sua API Key da OpenAI:");
+
+  if(apiKey && apiKey.trim() !== ""){
+   localStorage.setItem("OPENAI_API_KEY", apiKey);
+  } else {
+   alert(" API Key é obrigatória para usar a IA.");
+   return null;
+  }
+ }
+
+ return apiKey;
+}
+
+function trocarApiKey(){
+ localStorage.removeItem("OPENAI_API_KEY");
+ alert("API Key removida.");
+}
+
+
+
+ async function analisarIA(){
+
+ if(!selecionado){
+  alert("Selecione um usuário");
+  return;
+ }
+
+ const apiKey = getApiKey();
+ if(!apiKey) return;
+
+ document.getElementById("analiseIA").innerHTML = "⏳ Analisando...";
+
+ try{
+
+  const resposta = await fetch("https://api.openai.com/v1/chat/completions",{
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer " + apiKey
+   },
+   body: JSON.stringify({
+    model:"gpt-4o-mini",
+    messages:[
+     {role:"system", content:"Você é um especialista em desenvolvimento humano."},
+     {role:"user", content:`Analise: ${JSON.stringify(selecionado)}`}
+    ]
+   })
+  });
+
+  const json = await resposta.json();
+
+  console.log("RESPOSTA IA:", json); // 👈 DEBUG IMPORTANTE
+
+  // SE DER ERRO NA API
+  if(json.error){
+    document.getElementById("analiseIA").innerHTML =
+    "❌ Erro da API:<br>" + json.error.message;
+    return;
+  }
+
+  // SE NÃO VIER TEXTO
+  if(!json.choices || !json.choices[0]){
+    document.getElementById("analiseIA").innerHTML =
+    "❌ Resposta inesperada da IA.";
+    return;
+  }
+
+  const texto = json.choices[0].message.content;
+
+  document.getElementById("analiseIA").innerHTML = `
+    <h4>Análise Inteligente</h4>
+    <p>${texto.replace(/\n/g,"<br>")}</p>
+  `;
+
+ } catch(e){
+
+  console.error("ERRO COMPLETO:", e);
+
+  document.getElementById("analiseIA").innerHTML =
+   "❌ Falha na conexão. Possível bloqueio do navegador ou internet.";
+
+ }
+
+}
+
+function excluir(i){
+ banco.splice(i,1);
+ localStorage.setItem("empresa", JSON.stringify(banco));
+ atualizarTabela();
+}
+
+function limparTudo(){
+ localStorage.clear();
+ banco=[];
+ atualizarTabela();
+}
+
+
+function gerarPDF(){
+
+ if(!selecionado){
+  alert("Selecione um usuário");
+  return;
+ }
+
+ const { jsPDF } = window.jspdf;
+ const doc = new jsPDF();
+
+ let y = 20;
+
+ doc.setFontSize(16);
+ doc.text("Relatório de Avaliação",20,y);
+
+ y+=10;
+ doc.setFontSize(12);
+
+ doc.text("Nome: " + selecionado.nome,20,y); y+=8;
+ doc.text("Idade: " + selecionado.idade,20,y); y+=8;
+ doc.text("Formação: " + selecionado.formacao,20,y); y+=8;
+ doc.text("Área: " + selecionado.area,20,y); y+=8;
+ doc.text("Período: " + selecionado.periodo,20,y); y+=8;
+
+ y+=5;
+ doc.text("Média: " + selecionado.media.toFixed(2),20,y); y+=8;
+ doc.text("Percentual: " + selecionado.perc.toFixed(1)+"%",20,y); y+=10;
+
+ doc.text("Competências:",20,y); y+=8;
+
+ for(let c in selecionado.notas){
+   doc.text(c + ": " + selecionado.notas[c],20,y);
+   y+=6;
+ }
+
+ y+=10;
+ doc.text("Objetivo:",20,y); y+=8;
+
+ let texto = selecionado.objetivo || "";
+ let linhas = doc.splitTextToSize(texto, 160);
+ doc.text(linhas,20,y);
+
+ doc.save("relatorio_"+selecionado.nome+".pdf");
+}
+
+function exportCSV(){
+ let csv = "Nome,Media,Percentual\n";
+
+ banco.forEach(d=>{
+  csv += `${d.nome},${d.media},${d.perc}\n`;
+ });
+
+ download(csv,"dados.csv","text/csv");
+}
+
+function exportXML(){
+ let xml = "<dados>";
+
+ banco.forEach(d=>{
+  xml += `<item>
+   <nome>${d.nome}</nome>
+   <media>${d.media}</media>
+   <percentual>${d.perc}</percentual>
+  </item>`;
+ });
+
+ xml += "</dados>";
+
+ download(xml,"dados.xml","text/xml");
+}
+
+function download(content, fileName, type){
+ let a = document.createElement("a");
+ let file = new Blob([content], {type});
+ a.href = URL.createObjectURL(file);
+ a.download = fileName;
+ a.click();
+}
+
+
+function excluirSelecionado(){
+
+ if(selecionado === null){
+  alert("Selecione um item primeiro");
+  return;
+ }
+
+ banco = banco.filter(d => d !== selecionado);
+
+ localStorage.setItem("empresa", JSON.stringify(banco));
+
+ selecionado = null;
+
+ atualizarTabela();
+ alert("Item excluído");
+}
+
+function importarDados(event){
+
+ const file = event.target.files[0];
+
+ if(!file){
+  alert("Selecione um arquivo");
+  return;
+ }
+
+ const reader = new FileReader();
+
+ reader.onload = function(e){
+
+  const content = e.target.result;
+
+  try{
+
+   //  CSV
+   if(file.name.endsWith(".csv")){
+
+    let linhas = content.split("\n").slice(1);
+
+    linhas.forEach(linha=>{
+     let [nome, media, perc] = linha.split(",");
+
+     if(nome){
+      banco.push({
+       nome,
+       media: parseFloat(media) || 0,
+       perc: parseFloat(perc) || 0,
+       notas:{},
+       historico:[],
+       idade:"",
+       formacao:"",
+       area:"",
+       periodo:"",
+       objetivo:""
+      });
+     }
+    });
+
+   }
+
+   //  XML
+   else if(file.name.endsWith(".xml")){
+
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(content, "text/xml");
+
+    const items = xml.getElementsByTagName("item");
+
+    for(let i=0;i<items.length;i++){
+
+     let nome = items[i].getElementsByTagName("nome")[0]?.textContent;
+     let media = items[i].getElementsByTagName("media")[0]?.textContent;
+     let perc = items[i].getElementsByTagName("percentual")[0]?.textContent;
+
+     banco.push({
+      nome,
+      media: parseFloat(media) || 0,
+      perc: parseFloat(perc) || 0,
+      notas:{},
+      historico:[],
+      idade:"",
+      formacao:"",
+      area:"",
+      periodo:"",
+      objetivo:""
+     });
+    }
+   }
+
+   else{
+    alert("Formato não suportado");
+    return;
+   }
+
+   localStorage.setItem("empresa", JSON.stringify(banco));
+   atualizarTabela();
+
+   alert("Importado com sucesso!");
+
+  } catch(err){
+   alert("Erro ao importar arquivo");
+   console.error(err);
+  }
+
+ };
+
+ reader.readAsText(file);
+}
+
+function exportarCompleto(){
+
+ const dados = JSON.stringify(banco, null, 2);
+
+ const blob = new Blob([dados], { type: "application/json" });
+
+ const a = document.createElement("a");
+ a.href = URL.createObjectURL(blob);
+ a.download = "backup_avaliacoes.json";
+ a.click();
+}
+
+dados.forEach(novo => {
+ let existente = banco.find(p => p.nome === novo.nome);
+
+ if(existente){
+   existente.historico = existente.historico.concat(novo.historico);
+ } else {
+   banco.push(novo);
+ }
+});
+
+function exportarExcel(){
+
+ if(banco.length === 0){
+  alert("Sem dados para exportar");
+  return;
+ }
+
+ const dados = banco.map(p => {
+
+  let obj = {
+   Nome: p.nome,
+   Idade: p.idade,
+   Formação: p.formacao,
+   Área: p.area,
+   Período: p.periodo,
+   Objetivo: p.objetivo,
+   Média: p.media,
+   Percentual: p.perc
+  };
+
+  //  adiciona competências
+  for(let c in p.notas){
+   obj[c] = p.notas[c];
+  }
+
+  return obj;
+ });
+
+ const ws = XLSX.utils.json_to_sheet(dados);
+ const wb = XLSX.utils.book_new();
+
+ XLSX.utils.book_append_sheet(wb, ws, "Avaliações");
+
+ XLSX.writeFile(wb, "avaliacoes_completas.xlsx");
+}
+
+
+function editar(i){
+
+ selecionado = banco[i];
+
+ nome.value = selecionado.nome;
+ idade.value = selecionado.idade;
+ formacao.value = selecionado.formacao;
+ area.value = selecionado.area;
+ periodo.value = selecionado.periodo;
+ objetivo.value = selecionado.objetivo;
+
+ for(let c in selecionado.notas){
+  document.getElementById(c).value = selecionado.notas[c];
+ }
+
+ alert("Modo edição ativado");
+}
+
+atualizarTabela();
+
+</script>
+
+</body>
+
+  <footer>
+    <hr>
+        © 2026 — Iraê César Brandão - Dev - Página demonstrativa para fins acadêmicos </a>
+  </footer>
+</html>
