@@ -474,13 +474,49 @@ function limparTudo(){
 
 atualizarTabela();
 
+ 
+   /* ============================
+      TRAVAR A CÓPIA CONTEÚDO COM REF. AUTOR
+    ============================*/
+// ---------- BLOQUEAR CLIQUE DIREITO ----------
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // Bloqueia o menu do botão direito
+    alert("Copiar conteúdo não é permitido sem referência ao autor '© 2026 Iraê César Brandão - https://luckway.com.br' .");
+});
+
+// ---------- BLOQUEAR CTRL+C E CTRL+X ----------
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'x')) {
+        e.preventDefault(); // Bloqueia copiar e recortar
+        alert("Copiar/Recortar desativado. Cite o autor! '© 2026 Iraê César Brandão - https://luckway.com.br'");
+    }
+});
+
+// ---------- ADICIONAR REFERÊNCIA AUTOMÁTICA AO COPIAR ----------
+document.addEventListener('copy', function(e) {
+    e.preventDefault(); // Impede o comportamento padrão
+
+    let selectedText = window.getSelection().toString();
+    if (!selectedText) return; // Se não tiver nada selecionado, não faz nada
+
+    // Adiciona crédito automático
+    let textWithCredit = selectedText + "\n\n" + "© 2026 Iraê César Brandão - https://luckway.com.br";
+
+    // Adiciona ao clipboard
+    e.clipboardData.setData('text/plain', textWithCredit);
+
+    alert("Texto copiado com referência automática!");
+});
+
 </script>
 
 </body>
 <!-- ====================
       RODAPÉ
 ====================== -->
-   <footer  style="text-align:center; font-size: 15px; color: black" > <hr>
-        © 2026 — Iraê César Brandão - Dev - Página demonstrativa para fins acadêmicos </a>
-  </footer>
+<footer style="background:#0d47a1; color:white; text-align:center; padding:15px; margin-top:40px; font-size:10px;">
+      Todos os direitos reservados. 
+      Este sistema, seus algoritmos, estrutura matemática e arquitetura computacional são protegidos por direitos autorais e legislação aplicável, destinado para fins educacionais e sem fins lucrativos.
+      <p  style="text-align:center; font-size: 12px;"> © 2026 Luck Way® – Iraê César Brandão.  (Dev)  (Page for academic purposes.): <a href="license.html" style="color: white;">Academic License(AREUL)</a></p>
+ </footer>
 </html>
