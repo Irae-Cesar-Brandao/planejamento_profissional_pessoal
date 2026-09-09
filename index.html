@@ -8,7 +8,7 @@ METADADOS DO SISTEMA
 ====================== -->
 <title>Sistema de Avaliação Profissional-  versão 1.4.0</title>
 
-<meta name="author" content="Iraê César Brandão">
+<meta name="author" content="Iraê César Brandão - Desenvolvedor Luck Way Informática">
 
 <meta name="keywords" content="  avaliação de competências, inteligência artificial, desenvolvimento humano, análise de desempenho, gestão de talentos, dashboard, relatório PDF, educação, autoavaliação ">
 
@@ -106,7 +106,7 @@ flex-wrap:wrap;
 }
 
 /* ============================
-   CABEÇALHO E TUTORIAL
+    FRONT-END (CABEÇALHO E TUTORIAL)
    ============================ */
 .header-sistema {
  background:#0d47a1;
@@ -177,9 +177,9 @@ flex-wrap:wrap;
 
 </head>
 
-<!-- ====================
-     FRONT-END                           
-====================== -->
+<!-- ===============================
+  FRONT-END (CABEÇALHO E TUTORIAL)                        
+   ================================= -->
 <body>
 <div class="container">
 <div class="header-sistema">
@@ -250,7 +250,7 @@ Criado em: 04 abr. 2026 | Atualizado em: 09 set. 2026</div>
 
 <!-- ====================
     BOTÕES
-====================== -->
+   ====================== -->
 <button class="btn" onclick="salvar()">Salvar</button>
 <button class="btn-danger" onclick="limparTudo()">Limpar Tudo</button>
 <button onclick="exportarExcel()">Exportar Excel</button>
@@ -260,8 +260,8 @@ Criado em: 04 abr. 2026 | Atualizado em: 09 set. 2026</div>
 
 
 <!-- ====================
-TABELA RESULTDOS
-====================== -->
+    TABELA RESULTADOS
+    ====================== -->
 <div class="card">
 <h3>Base de Avaliações</h3>
 <table>
@@ -280,8 +280,8 @@ TABELA RESULTDOS
 
 
 <!-- ====================
- GRÁFICOS DASHBOARD
-====================== -->
+     GRÁFICOS DASHBOARD
+   ====================== -->
 <div class="card">
 <h3>Dashboard</h3>
 <div class="flex">
@@ -298,7 +298,7 @@ TABELA RESULTDOS
 
 <!-- ====================
          SCRIPTS JS
-====================== -->
+   ====================== -->
 <script>
 
 
@@ -606,9 +606,9 @@ function limparTudo(){
 atualizarTabela();
 
  
-   /* ============================
+   /* =========================================
       TRAVAR A CÓPIA CONTEÚDO COM REF. AUTOR
-    ============================*/
+    ===========================================*/
 // ---------- BLOQUEAR CLIQUE DIREITO ----------
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault(); // Bloqueia o menu do botão direito
@@ -623,7 +623,9 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// ---------- ADICIONAR REFERÊNCIA AUTOMÁTICA AO COPIAR ----------
+     /* =========================================
+          ADICIONAR REFERÊNCIA AUTOMÁTICA AO COPIAR
+      ===========================================*/
 document.addEventListener('copy', function(e) {
     e.preventDefault(); // Impede o comportamento padrão
 
@@ -644,7 +646,7 @@ document.addEventListener('copy', function(e) {
 </body>
 <!-- ====================
       RODAPÉ
-====================== -->
+    ====================== -->
 <footer style="background:#0d47a1; color:white; text-align:center; padding:15px; margin-top:40px; font-size:10px;">
       Todos os direitos reservados. 
       Este sistema, seus algoritmos, estrutura matemática e arquitetura computacional são protegidos por direitos autorais e legislação aplicável, destinado a caráter experimental, fins educacionais e acadêmicos, sem finalidade de lucro.
