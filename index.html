@@ -104,6 +104,75 @@ display:flex;
 gap:20px; 
 flex-wrap:wrap;
 }
+
+/* ============================
+   CABEÇALHO E TUTORIAL
+   ============================ */
+.header-sistema {
+ background:#0d47a1;
+ color:white;
+ padding:20px;
+ border-radius:10px;
+ margin-bottom:20px;
+}
+
+.header-sistema h1 {
+ color:white;
+ margin-top:0;
+ margin-bottom:10px;
+ text-shadow:3px 3px 0px #082b66;
+}
+
+.header-sistema .author {
+ color:white;
+ margin-bottom:0;
+}
+
+.tutorial {
+ background:#1e293b;
+ border-radius:10px;
+ margin-bottom:20px;
+ overflow:hidden;
+}
+
+.tutorial-toggle {
+ width:100%;
+ margin:0;
+ padding:14px 18px;
+ background:#0d47a1;
+ color:white;
+ border-radius:0;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ font-size:16px;
+ font-weight:bold;
+ text-align:left;
+}
+
+.tutorial-toggle:hover {
+ background:#1565c0;
+}
+
+.tutorial-conteudo {
+ display:none;
+ padding:20px;
+ color:white;
+ line-height:1.6;
+}
+
+.tutorial-conteudo.aberto {
+ display:block;
+}
+
+.tutorial-conteudo h3 {
+ margin-top:0;
+ color:#38bdf8;
+}
+
+.tutorial-conteudo li {
+ margin-bottom:8px;
+}
 </style>
 
 </head>
@@ -113,8 +182,58 @@ flex-wrap:wrap;
 ====================== -->
 <body>
 <div class="container">
+<div class="header-sistema">
 <h1>Sistema de Avaliação Profissional</h1>
-<div class="author">Iraê César Brandão - Desenvolvedor  (Versão 1.4.0 )  Data: 04-abril-2026</div>
+<div class="author">Iraê César Brandão - Desenvolvedor  (Versão 1.4.0 ) <br> 
+Criado em: 04 abr. 2026 | Atualizado em: 09 set. 2026</div>
+</div>
+
+<!-- ============================
+     TUTORIAL RETRÁTIL
+     ============================ -->
+<div class="tutorial">
+  <button type="button" class="tutorial-toggle" onclick="toggleTutorial()" aria-expanded="false" aria-controls="tutorial-conteudo">
+    <span>📘 Tutorial e orientações de uso</span>
+    <span id="tutorial-seta">▼</span>
+  </button>
+
+  <div id="tutorial-conteudo" class="tutorial-conteudo">
+    <h3>Sobre o sistema</h3>
+    <p>Este sistema foi elaborado como uma ferramenta experimental e educativa para apoiar a avaliação de competências profissionais, a organização dos resultados e o acompanhamento da evolução dos registros. A proposta é transformar as notas informadas pelo usuário em indicadores simples de média, percentual e classificação de perfil, permitindo também visualizar os resultados por meio de tabela e gráficos.</p>
+
+    <h3>Como utilizar</h3>
+    <ol>
+      <li><strong>Cadastro:</strong> preencha nome, idade, formação, área, período e objetivos/observações.</li>
+      <li><strong>Competências:</strong> informe uma nota de <strong>1 a 10</strong> para cada competência.</li>
+      <li><strong>Salvar:</strong> grava o cadastro no navegador e calcula média, percentual e perfil.</li>
+      <li><strong>Base de Avaliações:</strong> mostra os registros salvos, média, percentual e classificação.</li>
+      <li><strong>Editar:</strong> carrega um cadastro para alteração e registra uma nova avaliação no histórico.</li>
+      <li><strong>Dashboard:</strong> apresenta gráficos das competências e da evolução histórica.</li>
+      <li><strong>Exportar Excel:</strong> gera uma planilha com os dados das avaliações.</li>
+      <li><strong>Backup JSON:</strong> cria uma cópia dos dados para posterior importação.</li>
+      <li><strong>Importar JSON:</strong> recupera um backup previamente salvo.</li>
+      <li><strong>Exportar PDF:</strong> gera o relatório completo do cadastro selecionado.</li>
+      <li><strong>Limpar Tudo:</strong> remove os registros do navegador. Faça backup antes.</li>
+    </ol>
+
+    <h3>Como interpretar os resultados</h3>
+    <p>A <strong>média</strong> é calculada a partir das sete competências. O <strong>percentual</strong> corresponde à média convertida para uma escala de 0% a 100%. A classificação é:</p>
+    <ul>
+      <li><strong>P0 – Crítico:</strong> média até 2.</li>
+      <li><strong>P1 – Ruim:</strong> acima de 2 até 3,5.</li>
+      <li><strong>P2 – Instável:</strong> acima de 3,5 até 6.</li>
+      <li><strong>P3 – Funcional:</strong> acima de 6 até 7,5.</li>
+      <li><strong>P4 – Proficiente:</strong> acima de 7,5 até 9,5.</li>
+      <li><strong>P5 – Excelente:</strong> acima de 9,5 até 10.</li>
+    </ul>
+
+    <h3>Motivação e caráter experimental</h3>
+    <p>A elaboração desta aplicação tem finalidade <strong>experimental, acadêmica e educativa</strong>. Seu objetivo é demonstrar, de forma prática, conceitos de avaliação, cálculo de indicadores, armazenamento local, histórico, dashboard e geração de relatórios.</p>
+    <p>Os resultados são indicadores de apoio e aprendizagem e não devem ser interpretados, isoladamente, como diagnóstico definitivo ou decisão profissional automática.</p>
+    <p><strong>Importante:</strong> este projeto é destinado a fins educativos e <strong>sem finalidade de lucro</strong>. Os dados são armazenados no <strong>localStorage do navegador</strong>, conforme a implementação atual. Recomenda-se realizar o backup JSON antes de limpar os dados ou mudar de ambiente.</p>
+    <p><strong>Referência:</strong> © 2026 Luck Way® – Iraê César Brandão. Projeto destinado a fins acadêmicos e educacionais.</p>
+  </div>
+</div>
 
 <div class="card">
 <h3>Cadastro</h3>
@@ -181,6 +300,18 @@ TABELA RESULTDOS
          SCRIPTS JS
 ====================== -->
 <script>
+
+
+/* ========= TUTORIAL ========= */
+function toggleTutorial(){
+ let conteudo = document.getElementById("tutorial-conteudo");
+ let seta = document.getElementById("tutorial-seta");
+ let botao = document.querySelector(".tutorial-toggle");
+
+ let aberto = conteudo.classList.toggle("aberto");
+ botao.setAttribute("aria-expanded", aberto ? "true" : "false");
+ seta.textContent = aberto ? "▲" : "▼";
+}
 
 /* ========= UTIL ========= */
 function gerarId(texto){
@@ -516,7 +647,7 @@ document.addEventListener('copy', function(e) {
 ====================== -->
 <footer style="background:#0d47a1; color:white; text-align:center; padding:15px; margin-top:40px; font-size:10px;">
       Todos os direitos reservados. 
-      Este sistema, seus algoritmos, estrutura matemática e arquitetura computacional são protegidos por direitos autorais e legislação aplicável, destinado para fins educacionais e sem fins lucrativos.
+      Este sistema, seus algoritmos, estrutura matemática e arquitetura computacional são protegidos por direitos autorais e legislação aplicável, destinado a caráter experimental, fins educacionais e acadêmicos, sem finalidade de lucro.
       <p  style="text-align:center; font-size: 12px;"> © 2026 Luck Way® – Iraê César Brandão.  (Dev)  (Page for academic purposes.): <a href="license.html" style="color: white;">Academic License(AREUL)</a></p>
  </footer>
 </html>
